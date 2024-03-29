@@ -32,14 +32,16 @@ export const GeoMooseMap = () => {
 
     init(wasm)
       .then(() => {
-        return fetch('./parcels.geoparquet')
+        return fetch('./ramsey/plan_taxparcel_4326.geoparquet')
       })
       .then(r => r.arrayBuffer())
       .then(bytes => {
         const arrowBytes = parquet.readParquet(new Uint8Array(bytes));
         const table = arrow.tableFromIPC(arrowBytes.intoIPCStream());
 
-        const geometryColumn = table.getChild("geometry");
+				console.log(table.schema.fields);
+
+        const geometryColumn = table.getChild("geom");
         const features = [];
         geometryColumn.data.forEach(dataSet => {
           const offsets = dataSet.valueOffsets;
@@ -111,15 +113,15 @@ export const GeoMooseMap = () => {
       </div>
       <div>
         <Map style={{width: 600, height: 400}}>
-          <View options={{center: [-93, 44.5], zoom: 10}} />
-          <VectorLayer>
-            <VectorSource ref={vectorSourceRef} />
-          </VectorLayer>
-          {/*
+          <View options={{center: [-93, 45], zoom: 10}} />
+          {
           <TileLayer>
             <OSM />
           </TileLayer>
-          */}
+          }
+          <VectorLayer>
+            <VectorSource ref={vectorSourceRef} />
+          </VectorLayer>
         </Map>
       </div>
     </>
