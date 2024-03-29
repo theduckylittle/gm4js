@@ -68,24 +68,35 @@ export const GeoMooseMap = () => {
     const fieldDefs = dataTable.schema.fields.filter(field => field.type.typeId === Type.Utf8 || field.type.typeId === Type.LargeUtf8);
     const decoder = new TextDecoder();
     const queryString = searchString.toLowerCase();
+    const matchingIndexes = {};
     fieldDefs.forEach(fieldDef => {
       const field = dataTable.getChild(fieldDef.name);
-      const matchingIndexes = [];
-      field.data.forEach(dataSet => {
+      field.data.forEach((dataSet, dsIdx) => {
+        if (!matchingIndexes[dsIdx]) {
+          matchingIndexes[dsIdx] = {};
+        }
+
         const offsets = dataSet.valueOffsets;
-        const indexes = [];
         for (let i = 1, ii = offsets.length; i < ii; i++) {
           const [start, end] = [offsets[i - 1], offsets[i]]; 
           const asUtf = decoder.decode(dataSet.values.slice(start, end));
           // do the string comparison
           if (asUtf.toLowerCase().includes(queryString)) {
-            indexes.push(i - 1);
+            matchingIndexes[dsIdx][i - 1] = true;
           }
         }
-        matchingIndexes.push(indexes);
       });
-      console.log(fieldDef.name, 'matches=', matchingIndexes);
     });
+
+    // flatten this for faster indexing.
+    const matches = [];
+    Object.keys(matchingIndexes).forEach(dsId => {
+      Object.keys(matchingIndexes[dsId]).forEach(idx => {
+        matches.push([dsId, idx]);
+      });
+    });
+    console.log('matches=', matches);
+
   }
 
   return (
