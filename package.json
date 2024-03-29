@@ -8,18 +8,24 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "format": "npm run lint -- --fix",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mantine/core": "^7.10.2",
+    "@mantine/hooks": "^7.10.2",
     "@planet/maps": "^10.0.0",
+    "@tabler/icons-react": "^3.14.0",
     "apache-arrow": "^15.0.2",
     "axios": "^1.6.8",
+    "immer": "^10.1.1",
     "ol": "^9.1.0",
     "parquet-wasm": "^0.6.0-beta.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "vite-plugin-top-level-await": "^1.4.1",
-    "vite-plugin-wasm": "^3.3.0"
+    "vite-plugin-wasm": "^3.3.0",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

@@ -9,8 +9,8 @@ import { useGeographic as setGeographic } from "ol/proj";
 
 setGeographic();
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+ReactDOM.createRoot(document.getElementById('gm-root')).render(
+  <React.Fragment>
     <App />
-  </React.StrictMode>,
+  </React.Fragment>,
 )
