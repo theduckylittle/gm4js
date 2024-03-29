@@ -10,7 +10,7 @@ import { useGeographic as setGeographic } from "ol/proj";
 setGeographic();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  <>
     <App />
-  </React.StrictMode>,
+  </>,
 )
