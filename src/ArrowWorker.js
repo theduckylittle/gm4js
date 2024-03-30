@@ -14,7 +14,7 @@ self.onmessage = async evt => {
   await init(wasm);
   console.log("init happened...");
   // get the data
-  const response = await axios.get('../ramsey/plan_taxparcel_4326.geoparquet', {
+  const response = await axios.get('../metro_split/Parcels2023Ramsey.geoparquet', {
       responseType: 'arraybuffer',
       headers: {
         'Content-Type': 'application/x-binary',
@@ -27,7 +27,7 @@ self.onmessage = async evt => {
   const arrowBytes = parquet.readParquet(new Uint8Array(response.data));
   const table = tableFromIPC(arrowBytes.intoIPCStream());
 
-  const geometryColumn = table.getChild("geom");
+  const geometryColumn = table.getChild("Shape");
   const features = [];
   geometryColumn.data.forEach((dataSet, dsIdx) => {
     const offsets = dataSet.valueOffsets;
