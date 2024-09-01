@@ -1,0 +1,51 @@
+{
+  "layers": [
+    {
+      "type": "parquet",
+      "id": "parcels-layer",
+      "title": "Parcels",
+      "on": true,
+      "style": "filled",
+      "url": "/parcels.geoparquet",
+      "results": {
+        "searchHtml": "",
+        "popupHtml": "",
+        "gridColumns": "*"
+      }
+    },
+    {
+      "type": "parquet",
+      "id": "cities-layer",
+      "title": "Census places",
+      "on": true,
+      "style": "outlined",
+      "url": "/census/cities.geoparquet"
+    }
+  ],
+  "backgrounds": [
+    {
+      "type": "OSM",
+      "title": "OpenStreetMap",
+      "on": true
+    },
+    {
+      "type": "cog",
+      "title": "Cloud Optimized GeoTIFF (COG)",
+      "url": "./cog.tiff"
+    },
+    {
+      "type": "xyz",
+      "title": "Stadia smooth",
+      "url": "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}.png"
+    },
+    {
+      "type": "xyz",
+      "title": "Stadia smooth dark",
+      "url": "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}.png"
+    },
+    {
+      "type": "none",
+      "title": "None"
+    }
+  ]
+}

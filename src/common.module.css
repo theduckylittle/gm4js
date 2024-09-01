@@ -1,0 +1,87 @@
+html {
+  --gm-search-panel-left: 20px;
+  --gm-search-panel-top: 20px;
+  /* TODO: The search panel should have mobile, et al, breakpoints */
+  --gm-search-panel-width: 400px;
+}
+
+/* Map-panel includes any tool that is floating over the map.
+ */
+.gm-map-panel {
+    padding: 10px;
+    background-color: #f1f0f0;
+    z-index: 1000;
+    min-width: 35px;
+    min-height: 45px;
+    border-radius: 20px;
+    position: absolute;
+    background-color: white; /* Base color of the plate */
+    border: 5px solid #f5f5f5; /* Outer border (closest to the edge) */
+    box-shadow: 
+        0 0 0 5px #2979A4,   /* Vintage Corelle blue ring */
+        0 0 0 8px white,       /* White space between rings */
+        0 0 0 10px #2979A4;   /* Inner vintage Corelle blue ring */
+
+    transition: width,max-width 200ms ease-in;
+
+    .gm-map-panel-content {
+      max-height: 1000px;
+      transition-delay: 200ms;
+      transition: max-height 100ms ease-in;
+    }
+}
+
+.gm-map-panel-title-bar {
+  display: flex;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.gm-map-panel-collapsed {
+  composes: gm-map-panel;
+  max-height: 35px;
+  max-width: 35px;
+  overflow: hidden;
+
+  .gm-map-panel-content {
+    display: none;
+    max-height: 0px;
+  }
+}
+
+.gm-map-panel-title-bar-collapsed {
+  composes: gm-map-panel-title-bar;
+  position: absolute;
+  /* this is just an unreasonably fake width */
+  width: 1000px;
+  right: 7px;
+}
+
+.gm-search-panel-logo-fragment {
+  padding-bottom: 10px;
+}
+
+.gm-icon-button {
+  background-color: #ffffff;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.gm-icon-button:hover {
+  background-color: #f5f5f5;
+}
+
+.gm-checkbox {
+  background-color: unset;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+
+  .label {
+    flex: 1;
+  }
+}

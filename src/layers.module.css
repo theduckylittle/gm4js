@@ -1,0 +1,9 @@
+.gm-layer {
+  display: flex;
+  gap: 2.5px;
+
+  .title {
+    flex: 1;
+    font-weight: bold;
+  }
+}
