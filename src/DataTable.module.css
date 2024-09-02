@@ -1,0 +1,18 @@
+html {
+  --gm-data-table-panel-width: calc(100% - 40px);
+  --gm-data-table-panel-left: 20px;
+  /* --gm-data-table-panel-right: 20px; */
+  /* --gm-data-table-panel-top: 20px; */
+  --gm-data-table-panel-bottom: 20px;
+}
+
+.gm-data--table-panel {
+  position: absolute;
+  z-index: 1000;
+  top: var(--gm-data-table-panel-top);
+  bottom: var(--gm-data-table-panel-bottom);
+  left: var(--gm-data-table-panel-left);
+  right: var(--gm-data-table-panel-right);
+  width: var(--gm-data-table-panel-width);
+}
+

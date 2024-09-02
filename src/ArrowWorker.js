@@ -27,35 +27,35 @@ async function loadTable(url) {
 function runQuery(query) {
   const queryString = query.filterString;
 
-    const fieldDefs = TABLE.schema.fields.filter(field => field.type.typeId === Type.Utf8 || field.type.typeId === Type.LargeUtf8);
-    const decoder = new TextDecoder();
-    const matchingIndexes = {};
-    fieldDefs.forEach(fieldDef => {
-      const field = TABLE.getChild(fieldDef.name);
-      field.data.forEach((dataSet, dsIdx) => {
-        if (!matchingIndexes[dsIdx]) {
-          matchingIndexes[dsIdx] = {};
-        }
+  const fieldDefs = TABLE.schema.fields.filter(field => field.type.typeId === Type.Utf8 || field.type.typeId === Type.LargeUtf8);
+  const decoder = new TextDecoder();
+  const matchingIndexes = {};
+  fieldDefs.forEach(fieldDef => {
+    const field = TABLE.getChild(fieldDef.name);
+    field.data.forEach((dataSet, dsIdx) => {
+      if (!matchingIndexes[dsIdx]) {
+        matchingIndexes[dsIdx] = {};
+      }
 
-        const offsets = dataSet.valueOffsets;
-        for (let i = 1, ii = offsets.length; i < ii; i++) {
-          const [start, end] = [offsets[i - 1], offsets[i]]; 
-          const asUtf = decoder.decode(dataSet.values.slice(start, end));
-          // do the string comparison
-          if (asUtf.toLowerCase().includes(queryString)) {
-            matchingIndexes[dsIdx][i - 1] = true;
-          }
+      const offsets = dataSet.valueOffsets;
+      for (let i = 1, ii = offsets.length; i < ii; i++) {
+        const [start, end] = [offsets[i - 1], offsets[i]]; 
+        const asUtf = decoder.decode(dataSet.values.slice(start, end));
+        // do the string comparison
+        if (asUtf.toLowerCase().includes(queryString)) {
+          matchingIndexes[dsIdx][i - 1] = true;
         }
-      });
+      }
     });
+  });
 
-    // flatten this for faster indexing.
-    const matches = [];
-    Object.keys(matchingIndexes).forEach(dsId => {
-      Object.keys(matchingIndexes[dsId]).forEach(idx => {
-        matches.push(encodeId(dsId, idx));
-      });
+  // flatten this for faster indexing.
+  const matches = [];
+  Object.keys(matchingIndexes).forEach(dsId => {
+    Object.keys(matchingIndexes[dsId]).forEach(idx => {
+      matches.push(encodeId(dsId, idx));
     });
+  });
 
   return matches;
 }

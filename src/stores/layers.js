@@ -32,7 +32,7 @@ const getStyleName = (layer) => {
     const styleName = makeStyle(COLORS[AUTOSTYLE_COUNTER], layer.style !== "outlined");
     AUTOSTYLE_COUNTER += 1;
     return styleName;
-  }
+  }r
 }
 
 const computeStyle = (layer) => {
@@ -45,6 +45,10 @@ const computeStyle = (layer) => {
 export const useLayerStore = create((set) => ({
   layers: [], 
   backgrounds: [],
+  features: {},
+  setFeatures: (layerId, features) => {
+    set(produce((state) => { state.features[layerId] = features; }));
+  },
   parseMapbook: (mapbook) => {
     // ensure that only one background is "turned on",
     let bgSet = false;

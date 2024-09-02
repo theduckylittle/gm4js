@@ -2,6 +2,7 @@ import { useCallback, useRef, useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import { intersects } from "ol/extent";
 
+import { useLayerStore } from "./stores/layers";
 import { useQueryStore } from "./stores/query";
 
 import WKB from "ol/format/WKB";
@@ -20,9 +21,14 @@ export const ParquetLayer = ({layerId, url, geometryColumn, styleFn, ...rest}) =
       state.setSelectedFeatures,
     ]
   ));
-  const [features, setFeatures] = useState([]);
+  const [features] = useLayerStore(state => ([
+    state.features[layerId] || [],
+  ]));
+
+  // const [features, setFeatures] = useState([]);
   // const [selectedFeatures, setSelectedFeatures] = useState([]);
   const vectorSourceRef = useRef(null);
+  /*
   const workerRef = useRef(null);
 
   useEffect(() => {
@@ -63,6 +69,7 @@ export const ParquetLayer = ({layerId, url, geometryColumn, styleFn, ...rest}) =
       });
     }
   }, [url, geometryColumn, layerId, setSelectedFeatures, filterSet]);
+  */
 
   useEffect(() => {
     if (vectorSourceRef.current) {
@@ -71,6 +78,7 @@ export const ParquetLayer = ({layerId, url, geometryColumn, styleFn, ...rest}) =
       src.addFeatures(features);
     }
   }, [features]);
+  /*
 
   useEffect(() => {
     if (workerRef.current) {
@@ -80,6 +88,7 @@ export const ParquetLayer = ({layerId, url, geometryColumn, styleFn, ...rest}) =
       });
     }
   }, [filterSet]);
+  */
 
   const layerStyle = useCallback(feature => {
     const isSelected = selectedFeatures && (selectedFeatures.includes(feature.getId()));

@@ -2,10 +2,13 @@ import { useEffect, useState } from 'react'
 import { GeoMooseMap } from "./Map";
 import { LayersPanel } from "./LayersPanel";
 import { SearchPanel } from "./SearchPanel";
+import { DataTablePanel } from "./DataTablePanel";
 import axios from "axios";
 
 import { useLayerStore } from "./stores/layers";
 import { useMapStore } from "./stores/map";
+
+import { LayerProvider } from "./LayerProvider";
 
 import "primereact/resources/themes/mira/theme.css";
 
@@ -35,18 +38,20 @@ function App() {
   }
 
   return (
+    <LayerProvider>
       <PrimeReactProvider>
         <SearchPanel
           filterSet={filterSet}
           setFilterSet={setFilterSet}
         />
-        <LayersPanel
-        />
+        <LayersPanel />
+        <DataTablePanel />
         <GeoMooseMap
           filterSet={filterSet}
         />
       </PrimeReactProvider>
-    );
+    </LayerProvider>
+  );
   
 }
 
