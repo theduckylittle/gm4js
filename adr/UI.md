@@ -64,3 +64,17 @@ Duck's notes:
   I think version pinning and our infrequent release cycle may hedge against this problem.
 - Mantine is heavy on CSS variables. We could insert a mapping of `--geomoose-xxx` variables and
   backfill critical ones for custom themes.
+
+## Paginating the Data Table
+
+In GM3, virtualization was added to the data table to increase table rendering performance.
+This was a great improvement but has also led to a number of bugs and a maintenance headache of
+small, not-always-reproduceable UI quirks. Instead, the new version should support pagination,
+this decision is suspported by a few sources:
+
+- https://blog.hubspot.com/website/pagination-vs-infinite-scroll
+- https://www.nngroup.com/articles/infinite-scrolling-tips/
+- https://uxplanet.org/ux-infinite-scrolling-vs-pagination-1030d29376f1
+
+The general vibe is that we can get a better, more consistent, and more meaningful use out of
+the table if pagination is used instead of infinite scrolling.
