@@ -1,32 +1,31 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
-import { gmMapPanel, gmMapPanelCollapsed, gmMapPanelTitleBar, gmMapPanelTitleBarCollapsed, gmMapPanelContent } from "./common.module.css";
 import {
-  gmLayer,
+  gmLayersPanel, gmLayer,
 } from "./layers.module.css";
 
-import { Checkbox } from "./Checkbox";
+import { Panel } from 'primereact/panel';
+import { Checkbox } from "primereact/checkbox";
+import { RadioButton } from "primereact/radiobutton";
 
-import { IconButton } from "./IconButton";
 
 import { IconStack2 as LayersIcon } from "@tabler/icons-react";
-import { IconStack2Filled as FilledLayersIcon } from "@tabler/icons-react";
 
 import { useLayerStore } from "./stores/layers";
 
 export const Layer = ({layer, setLayerOn, exclusive}) => {
   // ensure this a boolean
   const isOn = !!layer.on;
+  const Element = exclusive ? RadioButton : Checkbox;
   return (
     <div className={gmLayer}>
-      <Checkbox checked={isOn} exclusive={exclusive}
-        onClick={() => {
-          // ensure that the toggle is a boolean
-          setLayerOn(layer.id, !isOn);
-        }}
-      >
-        {layer.title}
-      </Checkbox>
+        <Element inputId={`input-${layer.id}`}
+          onChange={() => {
+            // ensure that the toggle is a boolean
+            setLayerOn(layer.id, !isOn);
+          }}
+          checked={isOn}
+        />
+        <label htmlFor={`input-${layer.id}`}>{layer.title}</label>
     </div>
   );
 }
@@ -38,35 +37,19 @@ Layer.propTypes = {
 };
 
 export const LayersPanel = () => {
-  const [open, setOpen] = useState(true);
-  //  const bears = useBearStore((state) => state.bears)
   const [layers, setLayerOn, backgrounds] = useLayerStore(state => [state.layers, state.setLayerOn, state.backgrounds]);
   return (
-    <div
-      className={open ? gmMapPanel : gmMapPanelCollapsed }
-      style={{
-        right: "20px",
-        top: "20px",
-        width: "360px",
-        maxWidth: open ? "360px" : "30px",
-        overflow: "hidden",
-      }}
-    >
-      <div className={open ? gmMapPanelTitleBar : gmMapPanelTitleBarCollapsed }>
-        <div style={{flex: 1}}>
-          Layers
+    <Panel
+      header={
+        <div style={{display: "flex", alignItems: "center", gap: 2}}>
+          <LayersIcon />
+          <div style={{flex: 1}}>Layers</div>
         </div>
-        <IconButton
-          onClick={() => {
-            setOpen(v => !v);
-          }}
-          title="Show or hide the layers panel"
-        >
-          {open && <LayersIcon color="black" size={32} />}
-          {!open && <FilledLayersIcon color="black" size={32} />}
-        </IconButton>
-      </div>
-      <div className={gmMapPanelContent}>
+      }
+      toggleable
+      className={gmLayersPanel}
+    >
+      <div>
         <h3>Overlays</h3>
         {layers.length === 0 && (
           <div>
@@ -90,7 +73,7 @@ export const LayersPanel = () => {
           />
         ))}
       </div>
-    </div>
+    </Panel>
   );
 
 } 

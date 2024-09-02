@@ -71,17 +71,3 @@ html {
 .gm-icon-button:hover {
   background-color: #f5f5f5;
 }
-
-.gm-checkbox {
-  background-color: unset;
-  border: none;
-  padding: 0;
-  margin: 0;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-
-  .label {
-    flex: 1;
-  }
-}

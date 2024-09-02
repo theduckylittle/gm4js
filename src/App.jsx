@@ -7,6 +7,10 @@ import axios from "axios";
 import { useLayerStore } from "./stores/layers";
 import { useMapStore } from "./stores/map";
 
+import "primereact/resources/themes/mira/theme.css";
+
+import { PrimeReactProvider } from "primereact/api";
+
 function App() {
   const [ready, setReady] = useState(false);
   const parseMapbookLayers = useLayerStore(state => state.parseMapbook);
@@ -31,7 +35,7 @@ function App() {
   }
 
   return (
-      <>
+      <PrimeReactProvider>
         <SearchPanel
           filterSet={filterSet}
           setFilterSet={setFilterSet}
@@ -41,7 +45,7 @@ function App() {
         <GeoMooseMap
           filterSet={filterSet}
         />
-      </>
+      </PrimeReactProvider>
     );
   
 }

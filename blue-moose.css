@@ -1,0 +1,49 @@
+/**
+ * Make pretty blue and white bordered panels.
+ */
+body {
+  --geomoose-theme-blue: #2979a4;
+}
+
+.p-panel {
+  background-color: white; /* Base color of the plate */
+  border: 5px solid #f5f5f5; /* Outer border (closest to the edge) */
+  border-radius: 30px;
+  padding: 5px;
+  box-shadow:
+    0 0 0 5px #2979a4,
+    /* Vintage Corelle blue ring */ 0 0 0 8px white,
+    /* White space between rings */ 0 0 0 10px #2979a4; /* Inner vintage Corelle blue ring */
+}
+
+.p-panel .p-panel-header {
+  border: unset;
+  padding: 10px;
+}
+
+.p-panel .p-panel-content {
+  border: unset;
+  padding: 10px;
+  padding-top: 0px;
+}
+
+.p-panel h3 {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.p-checkbox.p-highlight .p-checkbox-box {
+  background-color: var(--geomoose-theme-blue);
+}
+
+.p-checkbox-box:not(.p-disabled) {
+  border-color: var(--geomoose-theme-blue);
+}
+
+.p-radiobutton.p-highlight .p-radiobutton-box {
+  background-color: var(--geomoose-theme-blue);
+}
+
+.p-radiobutton-box:not(.p-disabled) {
+  border-color: var(--geomoose-theme-blue);
+}
