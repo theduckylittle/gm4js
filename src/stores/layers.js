@@ -32,7 +32,7 @@ const getStyleName = (layer) => {
     const styleName = makeStyle(COLORS[AUTOSTYLE_COUNTER], layer.style !== "outlined");
     AUTOSTYLE_COUNTER += 1;
     return styleName;
-  }r
+  }
 }
 
 const computeStyle = (layer) => {

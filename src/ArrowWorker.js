@@ -7,6 +7,11 @@ const encodeId = (dsId, fId) => {
   return `@${dsId}-${fId}`;
 }
 
+const decodeId = (featureId) => {
+  const [dsId, fId] = featureId.split('-');
+  return [parseInt(dsId.substring(1)), parseInt(fId)];
+}
+
 let TABLE = null;
 
 async function loadTable(url) {
@@ -60,6 +65,49 @@ function runQuery(query) {
   return matches;
 }
 
+function getFeatureData(indexes, columns) {
+  const fieldDefs = TABLE.schema.fields.filter(field => columns === '*' || columns.includes(field.name));
+
+  // decode the indexes
+  const indexesByDataset = {};
+  indexes.forEach(index => {
+    const [dsId, fId] = decodeId(index);
+    if (!indexesByDataset[dsId]) {
+      indexesByDataset[dsId] = {};
+    }
+    indexesByDataset[dsId][fId] = true;
+  });
+
+  const featureProperties = {};
+  fieldDefs.forEach(fieldDef => {
+    const fieldName = fieldDef.name;
+    const field = TABLE.getChild(fieldName);
+    field.data.forEach((dataSet, dsIdx) => {
+      const offsets = dataSet.valueOffsets;
+      for (let i = 1, ii = offsets.length; i < ii; i++) {
+        const fId = i - 1;
+        // this feature is selected
+        if (indexesByDataset[dsId][fId]) {
+          const [start, end] = [offsets[i - 1], offsets[i]]; 
+          const fieldValue = dataSet.values.slice(start, end);
+          const featureId = encodeId(dsId, fId);
+          featureProperties[featureId] = {
+            ...featureProperties[featureId],
+            [fieldName]: fieldValue,
+          };
+        }
+      }
+    });
+  });
+
+  // flatten the object to an array.
+  const featureData = Object.keys(featureProperties).map(featureId => ({
+    id: featureId,
+    ...featureProperties[featureId],
+  }));
+  return featureData;
+}
+
 
 self.onmessage = async evt => {
   if (evt.data.type === 'load-table' && !TABLE) {
@@ -90,6 +138,11 @@ self.onmessage = async evt => {
     postMessage({
       type: "query-ready",
       results: runQuery(evt.data.query),
+    });
+  } else if (evt.data.type === 'load-data' && TABLE) {
+    postMessage({
+      type: "data-ready",
+      results: getFeatureData(evt.data.indexes, evt.data.columns),
     });
   }
 }
