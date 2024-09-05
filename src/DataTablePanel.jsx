@@ -3,13 +3,52 @@ import { useEffect } from "react";
 
 import { Panel } from 'primereact/panel';
 import { TabView, TabPanel } from 'primereact/tabview';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
 
 import { gmDataTablePanel } from './DataTable.module.css';
 
 import { useLayerStore } from "./stores/layers";
 import { useQueryStore } from "./stores/query";
 
-const GeoMooseDataTable = () => {
+
+function getColumnDefs(layerDef, featureData) {
+  if (layerDef.table?.columns) {
+    // TODO: Implement a hand crafted set of values.
+  } else {
+    // sniff the first feature
+    return Object.keys(featureData[0].properties).map(prop => ({
+      title: prop,
+      field: prop,
+    }));
+  }
+}
+
+const GeoMooseDataTable = ({layer, features}) => {
+  const columnDefs = getColumnDefs(layer, features);
+  const values = features.map(feature => feature.properties);
+
+  return (
+    <DataTable
+      value={values}
+      showGridlines
+      size="small"
+      paginator rows={10} rowsPerPageOptions={[5, 10, 25, 50]}
+      scrollable
+      scrollHeight={240}
+      resizableColumns
+      removableSort
+    >
+      {columnDefs.map(columnDef => (
+        <Column
+          sortable
+          key={columnDef.title}
+          field={columnDef.field}
+          header={columnDef.title}
+        />
+      ))}
+    </DataTable>
+  );
 };
 
 
@@ -20,7 +59,7 @@ export const DataTablePanel = () => {
   // * the layer must have results from the current query.
   //
   const [layers] = useLayerStore(state => [state.layers]);
-  const [selectedFeatures, requestFeatureData, featureDataRequests] = useQueryStore(state => [state.selectedFeatures, state.requestFeatureData, state.featureDataRequests]);
+  const [selectedFeatures, requestFeatureData, featureDataRequests, featureData] = useQueryStore(state => [state.selectedFeatures, state.requestFeatureData, state.featureDataRequests, state.featureData]);
 
   const layersWithSelectedFeatures = layers.filter(layer => {
     return layer.on && !!selectedFeatures[layer.id] && selectedFeatures[layer.id].length > 0;
@@ -33,7 +72,7 @@ export const DataTablePanel = () => {
         requestFeatureData(layer.id, ['*',]);
       }
     });
-  }, [requestFeatureData, layersWithSelectedFeatures]);
+  }, [requestFeatureData, layersWithSelectedFeatures, featureDataRequests]);
 
   console.log("layers with selected features=", layersWithSelectedFeatures, featureDataRequests);
 
@@ -58,11 +97,12 @@ export const DataTablePanel = () => {
             header={`${layer.title}: ${selectedFeatures[layer.id].length}`}
             key={layer.id}
           >
-            <ul>
-              <li key={layer.id}>
-                {layer.title}: {selectedFeatures[layer.id].length}
-              </li>
-            </ul>
+            {featureData[layer.id] && (
+              <GeoMooseDataTable
+                layer={layer}
+                features={featureData[layer.id]}
+              />
+            )}
          </TabPanel>
         ))}
       </TabView>

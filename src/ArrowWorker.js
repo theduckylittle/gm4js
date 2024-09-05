@@ -66,7 +66,7 @@ function runQuery(query) {
 }
 
 function getFeatureData(indexes, columns) {
-  const fieldDefs = TABLE.schema.fields.filter(field => columns === '*' || columns.includes(field.name));
+  const fieldDefs = TABLE.schema.fields.filter(field => (columns === '*' || columns.includes(field.name)) && field.name !== "geometry");
 
   // decode the indexes
   const indexesByDataset = {};
@@ -78,32 +78,51 @@ function getFeatureData(indexes, columns) {
     indexesByDataset[dsId][fId] = true;
   });
 
+  const decoder = new TextDecoder();
   const featureProperties = {};
   fieldDefs.forEach(fieldDef => {
     const fieldName = fieldDef.name;
     const field = TABLE.getChild(fieldName);
-    field.data.forEach((dataSet, dsIdx) => {
-      const offsets = dataSet.valueOffsets;
-      for (let i = 1, ii = offsets.length; i < ii; i++) {
-        const fId = i - 1;
-        // this feature is selected
-        if (indexesByDataset[dsId][fId]) {
-          const [start, end] = [offsets[i - 1], offsets[i]]; 
-          const fieldValue = dataSet.values.slice(start, end);
-          const featureId = encodeId(dsId, fId);
-          featureProperties[featureId] = {
-            ...featureProperties[featureId],
-            [fieldName]: fieldValue,
-          };
+
+    // handle decoding the UTF8 values to a string
+    if (fieldDef.type.typeId === Type.Utf8 || fieldDef.type.typeId === Type.LargeUtf8) {
+      field.data.forEach((dataSet, dsId) => {
+        const offsets = dataSet.valueOffsets;
+        for (let i = 1, ii = offsets.length; i < ii; i++) {
+          const fId = i - 1;
+          // this feature is selected
+          if (indexesByDataset[dsId] && indexesByDataset[dsId][fId]) {
+            const [start, end] = [offsets[i - 1], offsets[i]]; 
+            const fieldValue = dataSet.values.slice(start, end);
+            const featureId = encodeId(dsId, fId);
+            featureProperties[featureId] = {
+              ...featureProperties[featureId],
+              [fieldName]: decoder.decode(fieldValue),
+            };
+          }
         }
-      }
-    });
+      });
+    } else {
+      field.data.forEach((dataSet, dsId) => {
+        if (indexesByDataset[dsId]) {
+          Object.keys(indexesByDataset[dsId]).forEach(fId => {
+              const featureId = encodeId(dsId, fId);
+              featureProperties[featureId] = {
+                ...featureProperties[featureId],
+                [fieldName]: dataSet.values[fId - 1],
+              };
+          });
+        }
+      });
+    }
   });
 
   // flatten the object to an array.
   const featureData = Object.keys(featureProperties).map(featureId => ({
     id: featureId,
-    ...featureProperties[featureId],
+    properties: {
+      ...featureProperties[featureId],
+    },
   }));
   return featureData;
 }

@@ -30,7 +30,8 @@ export const useQueryStore = create((set) => ({
   },
   featureData: {},
   setFeatureData: (layerId, featureData) => {
-    set(produce((state) => state.featureData[layerId] = featureData));
+    console.log("setFeatureData", layerId, featureData);
+    set(produce((state) => { state.featureData[layerId] = featureData; }));
   },
   clearFeatureData: (layerId) => {
     set(produce((state) => state.featureData[layerId] = []));

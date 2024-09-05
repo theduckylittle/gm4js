@@ -13,7 +13,7 @@ import Feature from 'ol/Feature';
 const isParquet = layer => layer.type === 'parquet';
 
 
-const createWorker = (layer, filterSet, setFeatures, setSelectedFeatures) => {
+const createWorker = (layer, filterSet, setFeatures, setSelectedFeatures ,setFeatureData) => {
   const layerId = layer.id;
   const worker = new ArrowWorker();
   worker.onmessage = evt => {
@@ -36,6 +36,17 @@ const createWorker = (layer, filterSet, setFeatures, setSelectedFeatures) => {
       });
     } else if (evt.data.type === "query-ready") {
       setSelectedFeatures(layerId, evt.data.results);
+      // TODO: Check to see if table data is required
+      if (true) {
+        worker.postMessage({
+          type: "load-data",
+          indexes: evt.data.results,
+          columns: '*',
+        });
+      }
+
+    } else if (evt.data.type === "data-ready") {
+      setFeatureData(layerId, evt.data.results);
     }
   }
   worker.postMessage({
@@ -52,10 +63,11 @@ export const LayerProvider = ({children}) => {
     state.layers,
     state.setFeatures,
   ]);
-  const [filterSet, setSelectedFeatures] = useQueryStore(state => (
+  const [filterSet, setSelectedFeatures, setFeatureData] = useQueryStore(state => (
     [
       state.filterSet,
       state.setSelectedFeatures,
+      state.setFeatureData,
     ]
   ));
 
@@ -69,7 +81,7 @@ export const LayerProvider = ({children}) => {
           nextWorkers[layerId] = workers.current[layerId];
         } else {
           // need to create a new worker
-          nextWorkers[layerId] = createWorker(layer, filterSet, setFeatures, setSelectedFeatures);
+          nextWorkers[layerId] = createWorker(layer, filterSet, setFeatures, setSelectedFeatures, setFeatureData);
         }
       } else {
         // handle layers that are off but were on.
