@@ -1,8 +1,12 @@
 import { useState } from "react";
+
 import { useQueryStore } from "./stores/query";
 
 export const Search = () => {
-  const [filterSet, setFilterSet] = useQueryStore(state => [state.filterSet, state.setFilterSet]);
+  const [filterSet, setFilterSet] = useQueryStore((state) => [
+    state.filterSet,
+    state.setFilterSet,
+  ]);
   const [searchString, setSearchString] = useState("");
   const doSearch = () => {
     const nextFilters = {
@@ -24,20 +28,17 @@ export const Search = () => {
         gap: 10,
       }}
     >
-        <input 
-          style={{padding: 8, flex: 1}}
-          onChange={evt => setSearchString(evt.target.value)} value={searchString}
-          onKeyPress={evt => {
-            if (evt.key === "Enter") {
-              doSearch();
-            }
-          }}
-        />
-        <button
-          onClick={doSearch}
-        >
-          Search
-        </button>
-      </div>
+      <input
+        style={{ padding: 8, flex: 1 }}
+        onChange={(evt) => setSearchString(evt.target.value)}
+        value={searchString}
+        onKeyPress={(evt) => {
+          if (evt.key === "Enter") {
+            doSearch();
+          }
+        }}
+      />
+      <button onClick={doSearch}>Search</button>
+    </div>
   );
-}
+};

@@ -1,6 +1,27 @@
+html {
+  /* TODO: The layers panel should have mobile, et al, breakpoints */
+  --gm-layers-panel-width: 360px;
+  /* --gm-layers-panel-left: 20px; */
+  --gm-layers-panel-right: 20px;
+  --gm-layers-panel-top: 20px;
+  /* --gm-layers-panel-bottom: 20px; */
+}
+
+.gm-layers-panel {
+  position: absolute;
+  z-index: 1000;
+  top: var(--gm-layers-panel-top);
+  bottom: var(--gm-layers-panel-bottom);
+  left: var(--gm-layers-panel-left);
+  right: var(--gm-layers-panel-right);
+  width: var(--gm-layers-panel-width);
+}
+
 .gm-layer {
   display: flex;
   gap: 2.5px;
+  line-height: 1.5;
+  align-items: center;
 
   .title {
     flex: 1;
