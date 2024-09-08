@@ -29,12 +29,7 @@ export const Layer = ({ layer }) => {
   } else if (layer.type === "parquet") {
     // TODO: Maybe this should sniff the first geometry to
     //       understand the geometry type for styling.
-    return (
-      <ParquetLayer
-        layerId={layer.id}
-        styleFn={getStyle(layer.style)}
-      />
-    );
+    return <ParquetLayer layerId={layer.id} styleFn={getStyle(layer.style)} />;
   } else if (layer.type === "cog") {
     return (
       <TileLayer>

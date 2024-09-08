@@ -5,7 +5,7 @@
 import { produce } from "immer";
 import { create } from "zustand";
 
-import { makeStyle } from "../style";
+import { makePointStyle, makeStyle } from "../style";
 
 let LAST_ID = 0;
 function makeId(prefix = "id") {
@@ -29,15 +29,22 @@ const COLORS = [
 // of the `makeStyle` function above but it handles a few more
 // oddities of the potential data.
 const getStyleName = (layer) => {
-  if (typeof layer.style === "string" || !!layer.style) {
+  let styleName = "";
+  if (typeof layer.style === "string" || !layer.style) {
     // "Auto" styling.
-    const styleName = makeStyle(
+    styleName = makeStyle(
       COLORS[AUTOSTYLE_COUNTER],
       layer.style !== "outlined",
     );
     AUTOSTYLE_COUNTER += 1;
-    return styleName;
+  } else if (typeof layer.style === "object") {
+    // simple icon representation on the map
+    if (layer.style.name === "icon") {
+      styleName = makePointStyle(layer.style, COLORS[AUTOSTYLE_COUNTER]);
+      AUTOSTYLE_COUNTER += 1;
+    }
   }
+  return styleName;
 };
 
 const computeStyle = (layer) => {

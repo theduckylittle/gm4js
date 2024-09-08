@@ -1,10 +1,28 @@
 {
   "map": {
+    "_initialView": {
+      "bounds": [
+        -93.28168703649804, 44.469055823489384, -93.03521284228586,
+        44.63582863951095
+      ]
+    },
     "initialView": {
-      "bounds": [-93.28168703649804, 44.469055823489384, -93.03521284228586, 44.63582863951095] 
+      "center": [-93.03521284228586, 44.63582863951095],
+      "zoom": 11
     }
   },
   "layers": [
+    {
+      "type": "parquet",
+      "id": "parks",
+      "title": "County parks",
+      "on": true,
+      "style": {
+        "name": "icon",
+        "icon": "garden"
+      },
+      "url": "/parks.geoparquet"
+    },
     {
       "type": "parquet",
       "id": "parcels-layer",
