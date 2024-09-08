@@ -36,7 +36,7 @@
     {
       "type": "cog",
       "title": "Cloud Optimized GeoTIFF (COG)",
-      "url": "./cog.tiff"
+      "url": "/2022-dakota-cog.tiff"
     },
     {
       "type": "xyz",

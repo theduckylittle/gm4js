@@ -24,7 +24,7 @@ function App() {
   // this is the core bootstrap of the application.
   useEffect(() => {
     if (!ready) {
-      axios.get("./mapbook.json")
+      axios.get("/mapbook.json")
         .then(res => {
           parseMapbookLayers(res.data);
           parseMapbookMap(res.data);

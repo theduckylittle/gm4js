@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import TileLayer from "@planet/maps/layer/WebGLTile";
 import OSM from "@planet/maps/source/OSM";
 import XYZSource from "@planet/maps/source/XYZ";
+import GeoTiff from "@planet/maps/source/GeoTIFF";
 
 import { ParquetLayer } from "./ParquetAsTiles";
 
@@ -38,6 +39,21 @@ export const Layer = ({layer}) => {
         styleFn={getStyle(layer.style)}
         geometryColumn="geometry"
       />
+    );
+  } else if (layer.type === "cog") {
+    return (
+      <TileLayer>
+        <GeoTiff
+          options={{
+            convertToRGB: true,
+            sources: [
+              {
+                url: layer.url,
+              },
+            ],
+          }}
+        />
+      </TileLayer>
     );
   }
 

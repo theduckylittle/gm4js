@@ -74,8 +74,6 @@ export const DataTablePanel = () => {
     });
   }, [requestFeatureData, layersWithSelectedFeatures, featureDataRequests]);
 
-  console.log("layers with selected features=", layersWithSelectedFeatures, featureDataRequests);
-
   return (
     <Panel
       className={gmDataTablePanel}
