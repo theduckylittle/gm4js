@@ -14,6 +14,10 @@ function getColumnDefs(layerDef, featureData) {
   if (layerDef.table?.columns) {
     // TODO: Implement a hand crafted set of values.
   } else {
+    // if no matching features, return no columns
+    if (!featureData || featureData.length === 0) {
+      return [];
+    }
     // sniff the first feature
     return Object.keys(featureData[0].properties).map((prop) => ({
       title: prop,
