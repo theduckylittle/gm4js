@@ -1,11 +1,14 @@
+import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
 import { useState } from "react";
 
 import { useQueryStore } from "./stores/query";
 
 export const Search = () => {
-  const [filterSet, setFilterSet] = useQueryStore((state) => [
+  const [filterSet, setFilterSet, clearFilters] = useQueryStore((state) => [
     state.filterSet,
     state.setFilterSet,
+    state.clearFilters,
   ]);
   const [searchString, setSearchString] = useState("");
   const doSearch = () => {
@@ -26,9 +29,14 @@ export const Search = () => {
       style={{
         display: "flex",
         gap: 10,
+        flexDirection: "column",
       }}
     >
-      <input
+      <label htmlFor="input-search" style={{ fontWeight: "bold" }}>
+        Search text
+      </label>
+      <InputText
+        id="input-search"
         style={{ padding: 8, flex: 1 }}
         onChange={(evt) => setSearchString(evt.target.value)}
         value={searchString}
@@ -38,7 +46,21 @@ export const Search = () => {
           }
         }}
       />
-      <button onClick={doSearch}>Search</button>
+      <div style={{ display: "flex", gap: 3 }}>
+        <div style={{ flex: 1 }}>
+          <Button
+            onClick={() => {
+              clearFilters();
+            }}
+            text
+          >
+            Clear search
+          </Button>
+        </div>
+        <div>
+          <Button onClick={doSearch}>Search</Button>
+        </div>
+      </div>
     </div>
   );
 };

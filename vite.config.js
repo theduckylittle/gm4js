@@ -11,5 +11,8 @@ export default defineConfig({
       localsConvention: "camelCaseOnly",
     },
   },
+  build: {
+    assetsDir: "geomoose",
+  },
   plugins: [wasm(), topLevelAwait(), react()],
 });

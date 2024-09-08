@@ -47,6 +47,11 @@ export const useQueryStore = create((set) => ({
       filterSet,
     });
   },
+  clearFilters: () => {
+    set({
+      filterSet: {},
+    });
+  },
   selectedFeatures: {},
   setSelectedFeatures: (layerId, features) => {
     set(
@@ -63,5 +68,39 @@ export const useQueryStore = create((set) => ({
         selectedFeatures: {},
       });
     }
+  },
+
+  // query features are those used for select and identify
+  queryFeatures: [],
+  setQueryFeatures: (queryFeatures) => {
+    set(
+      produce((state) => {
+        state.queryFeatures = queryFeatures;
+      }),
+    );
+  },
+  clearQueryFeatures: () => {
+    set(
+      produce((state) => {
+        state.queryFeatures = [];
+      }),
+    );
+  },
+
+  // selection features are those used for select and identify
+  selectionFeatures: [],
+  setSelectionFeatures: (selectionFeatures) => {
+    set(
+      produce((state) => {
+        state.selectionFeatures = selectionFeatures;
+      }),
+    );
+  },
+  clearSelectionFeatures: () => {
+    set(
+      produce((state) => {
+        state.selectionFeatures = [];
+      }),
+    );
   },
 }));

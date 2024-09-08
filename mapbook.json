@@ -1,4 +1,7 @@
 {
+  "siteSettings": {
+    "logoHtml": "<div style='text-align: center'><a target='_blank' href='https://www.geomoose.org'><img src='https://www.geomoose.org/_static/logo_2011.png'/></a></div>"
+  },
   "map": {
     "_initialView": {
       "bounds": [
@@ -42,7 +45,10 @@
       "title": "Census places",
       "on": true,
       "style": "outlined",
-      "url": "/census/cities.geoparquet"
+      "url": "/census/cities.geoparquet",
+      "query": {
+        "select": false
+      }
     }
   ],
   "backgrounds": [
@@ -53,8 +59,8 @@
     },
     {
       "type": "cog",
-      "title": "Cloud Optimized GeoTIFF (COG)",
-      "url": "/2022-dakota-cog.tiff"
+      "title": "Air photo",
+      "url": "https://storage.googleapis.com/gm4-demo-data/county/2022-aerial.tiff"
     },
     {
       "type": "xyz",

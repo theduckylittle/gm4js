@@ -1,15 +1,13 @@
+import { Accordion, AccordionTab } from "primereact/accordion";
+
 import { gmMapPanel, gmSearchPanelLogoFragment } from "./common.module.css";
 import { Search as SearchBox } from "./Search";
-
-const logoFragment = `
-  <div style="text-align: center">
-    <a target="_blank" href="https://www.geomoose.org">
-      <img src="/public/logo_2011.png"/>
-    </a>
-  </div>
-`;
+import { SelectBox } from "./SelectBox";
+import { useSiteSettingsStore } from "./stores/site-settings";
 
 export const SearchPanel = () => {
+  const [logoHtml] = useSiteSettingsStore((state) => [state.logoHtml]);
+
   return (
     <div
       className={gmMapPanel}
@@ -19,14 +17,20 @@ export const SearchPanel = () => {
         width: "var(--gm-search-panel-width)",
       }}
     >
-      {!!logoFragment && (
+      {!!logoHtml && (
         <div
           className={gmSearchPanelLogoFragment}
-          dangerouslySetInnerHTML={{ __html: logoFragment }}
+          dangerouslySetInnerHTML={{ __html: logoHtml }}
         ></div>
       )}
-
-      <SearchBox />
+      <Accordion activeIndex={0}>
+        <AccordionTab header="Search">
+          <SearchBox />
+        </AccordionTab>
+        <AccordionTab header="Select features">
+          <SelectBox />
+        </AccordionTab>
+      </Accordion>
     </div>
   );
 };

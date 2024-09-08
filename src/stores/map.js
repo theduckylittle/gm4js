@@ -1,5 +1,5 @@
+import { produce } from "immer";
 import { create } from "zustand";
-// import { produce } from 'immer';
 
 export const useMapStore = create((set) => ({
   initialView: {},
@@ -12,5 +12,31 @@ export const useMapStore = create((set) => ({
       updates.initialView = [0, 0, 2];
     }
     set(updates);
+  },
+
+  // handle which control is enabled on the map.
+  control: "",
+  setControl: (control) => {
+    set(
+      produce((state) => {
+        state.control = control;
+      }),
+    );
+  },
+
+  // buffer settings for select operations
+  bufferSettings: {
+    on: false,
+    distance: 0,
+    units: "ft",
+  },
+  setBufferSettings: (options) => {
+    set(
+      produce((state) => {
+        Object.keys(options).forEach((opt) => {
+          state.bufferSettings[opt] = options[opt];
+        });
+      }),
+    );
   },
 }));

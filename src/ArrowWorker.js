@@ -1,5 +1,9 @@
 import { tableFromIPC, Type } from "apache-arrow";
 import axios from "axios";
+import GeoJSON from "ol/format/GeoJSON";
+import WKB from "ol/format/WKB";
+
+import { booleanIntersects as intersects } from "@turf/boolean-intersects";
 
 import init, * as parquet from "../node_modules/parquet-wasm/esm/parquet_wasm";
 import wasm from "../node_modules/parquet-wasm/esm/parquet_wasm_bg.wasm?url";
@@ -29,15 +33,29 @@ async function loadTable(url) {
   return table;
 }
 
-function runQuery(query) {
+function isUtfField(field) {
+  return (
+    field.type.typeId === Type.Utf8 || field.type.typeId === Type.LargeUtf8
+  );
+}
+
+function isGeometryField(field) {
+  return field.name === "geometry";
+}
+
+function runQuery(query, queryFeatures) {
   const queryString = query.filterString;
 
   const fieldDefs = TABLE.schema.fields.filter(
-    (field) =>
-      field.type.typeId === Type.Utf8 || field.type.typeId === Type.LargeUtf8,
+    (field) => isUtfField(field) || isGeometryField(field),
   );
   const decoder = new TextDecoder();
   const matchingIndexes = {};
+  const hasGeometryFilter = queryFeatures.length > 0;
+
+  const wkbFormat = new WKB();
+  const jsonFormat = new GeoJSON();
+
   fieldDefs.forEach((fieldDef) => {
     const field = TABLE.getChild(fieldDef.name);
     field.data.forEach((dataSet, dsIdx) => {
@@ -45,13 +63,31 @@ function runQuery(query) {
         matchingIndexes[dsIdx] = {};
       }
 
-      const offsets = dataSet.valueOffsets;
-      for (let i = 1, ii = offsets.length; i < ii; i++) {
-        const [start, end] = [offsets[i - 1], offsets[i]];
-        const asUtf = decoder.decode(dataSet.values.slice(start, end));
-        // do the string comparison
-        if (asUtf.toLowerCase().includes(queryString)) {
-          matchingIndexes[dsIdx][i - 1] = true;
+      if (queryString && isUtfField(fieldDef)) {
+        const offsets = dataSet.valueOffsets;
+        for (let i = 1, ii = offsets.length; i < ii; i++) {
+          const [start, end] = [offsets[i - 1], offsets[i]];
+          const asUtf = decoder.decode(dataSet.values.slice(start, end));
+          // do the string comparison
+          if (asUtf.toLowerCase().includes(queryString)) {
+            matchingIndexes[dsIdx][i - 1] = true;
+          }
+        }
+      }
+
+      if (hasGeometryFilter && isGeometryField(fieldDef)) {
+        // this has a lot of opportunity for optimization...
+        const offsets = dataSet.valueOffsets;
+        for (let i = 1, ii = offsets.length; i < ii; i++) {
+          const [start, end] = [offsets[i - 1], offsets[i]];
+          const geom = wkbFormat.readGeometry(dataSet.values.slice(start, end));
+          const dataGeom = jsonFormat.writeGeometryObject(geom);
+          // see if any of the query features intersect
+          queryFeatures.forEach((queryFeature) => {
+            if (intersects(dataGeom, queryFeature.geometry)) {
+              matchingIndexes[dsIdx][i - 1] = true;
+            }
+          });
         }
       }
     });
@@ -72,7 +108,7 @@ function getFeatureData(indexes, columns) {
   const fieldDefs = TABLE.schema.fields.filter(
     (field) =>
       (columns === "*" || columns.includes(field.name)) &&
-      field.name !== "geometry",
+      !isGeometryField(field),
   );
 
   // decode the indexes
@@ -165,7 +201,7 @@ self.onmessage = async (evt) => {
   } else if (evt.data.type === "execute-query" && TABLE) {
     postMessage({
       type: "query-ready",
-      results: runQuery(evt.data.query),
+      results: runQuery(evt.data.query, evt.data.queryFeatures || []),
     });
   } else if (evt.data.type === "load-data" && TABLE) {
     postMessage({

@@ -13,6 +13,7 @@ export const Layer = ({ layer }) => {
     return false;
   }
 
+  // lean into making OpenStreetMap really easy to use.
   if (layer.type === "osm") {
     return (
       <TileLayer>
