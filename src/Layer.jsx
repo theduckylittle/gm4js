@@ -31,10 +31,8 @@ export const Layer = ({ layer }) => {
     //       understand the geometry type for styling.
     return (
       <ParquetLayer
-        url={layer.url}
         layerId={layer.id}
         styleFn={getStyle(layer.style)}
-        geometryColumn="geometry"
       />
     );
   } else if (layer.type === "cog") {
