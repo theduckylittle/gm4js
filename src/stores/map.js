@@ -1,9 +1,9 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 // import { produce } from 'immer';
 
 export const useMapStore = create((set) => ({
   initialView: {},
-  parseMapbook: mapbook => {
+  parseMapbook: (mapbook) => {
     const updates = {};
     if (mapbook.map?.initialView) {
       updates.initialView = mapbook.map.initialView;

@@ -11,17 +11,22 @@ const logoFragment = `
 
 export const SearchPanel = () => {
   return (
-    <div className={gmMapPanel} style={{
+    <div
+      className={gmMapPanel}
+      style={{
         top: "var(--gm-search-panel-top)",
         left: "var(--gm-search-panel-left)",
         width: "var(--gm-search-panel-width)",
-    }}>
+      }}
+    >
       {!!logoFragment && (
-        <div className={gmSearchPanelLogoFragment} dangerouslySetInnerHTML={{__html: logoFragment}}>
-        </div>
+        <div
+          className={gmSearchPanelLogoFragment}
+          dangerouslySetInnerHTML={{ __html: logoFragment }}
+        ></div>
       )}
 
       <SearchBox />
     </div>
   );
-}
+};

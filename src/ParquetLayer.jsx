@@ -1,15 +1,20 @@
-import { useCallback, useRef, useState, useEffect } from "react";
-import PropTypes from 'prop-types';
-
-import WKB from "ol/format/WKB";
-import Feature from "ol/Feature";
-
 import VectorLayer from "@planet/maps/layer/Vector";
 import VectorSource from "@planet/maps/source/Vector";
+import Feature from "ol/Feature";
+import WKB from "ol/format/WKB";
+import PropTypes from "prop-types";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import ArrowWorker from "./ArrowWorker?worker";
 
-export const ParquetLayer = ({layerId, url, geometryColumn, styleFn, filterSet, ...rest}) => {
+export const ParquetLayer = ({
+  layerId,
+  url,
+  geometryColumn,
+  styleFn,
+  filterSet,
+  ...rest
+}) => {
   const [features, setFeatures] = useState([]);
   const [selectedFeatures, setSelectedFeatures] = useState([]);
   const vectorSourceRef = useRef(null);
@@ -18,16 +23,18 @@ export const ParquetLayer = ({layerId, url, geometryColumn, styleFn, filterSet, 
   useEffect(() => {
     const worker = new ArrowWorker();
     workerRef.current = worker;
-    worker.onmessage = evt => {
+    worker.onmessage = (evt) => {
       if (evt.data.type === "features-ready") {
         const wkb = new WKB();
-        setFeatures(evt.data.features.map(({id, geometry}) => {
-          const feature = new Feature({
-            geometry: wkb.readGeometry(geometry),
-          });
-          feature.setId(id);
-          return feature;
-        }));
+        setFeatures(
+          evt.data.features.map(({ id, geometry }) => {
+            const feature = new Feature({
+              geometry: wkb.readGeometry(geometry),
+            });
+            feature.setId(id);
+            return feature;
+          }),
+        );
       } else if (evt.data.type === "table-ready") {
         worker.postMessage({
           type: "load-features",
@@ -37,7 +44,7 @@ export const ParquetLayer = ({layerId, url, geometryColumn, styleFn, filterSet, 
         // setSelectedFeatures(layerId, evt.data.results);
         setSelectedFeatures(evt.data.results);
       }
-    }
+    };
     worker.postMessage({
       type: "load-table",
       url,
@@ -61,17 +68,21 @@ export const ParquetLayer = ({layerId, url, geometryColumn, styleFn, filterSet, 
     }
   }, [filterSet]);
 
-  const layerStyle = useCallback(feature => {
-    const isSelected = selectedFeatures && (selectedFeatures.includes(feature.getId()));
-    return styleFn(isSelected);
-  }, [selectedFeatures, styleFn]);
+  const layerStyle = useCallback(
+    (feature) => {
+      const isSelected =
+        selectedFeatures && selectedFeatures.includes(feature.getId());
+      return styleFn(isSelected);
+    },
+    [selectedFeatures, styleFn],
+  );
 
   return (
     <VectorLayer style={layerStyle} {...rest}>
       <VectorSource ref={vectorSourceRef} />
     </VectorLayer>
   );
-}
+};
 
 ParquetLayer.propTypes = {
   layerId: PropTypes.string,

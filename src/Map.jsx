@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react"; 
 import Map from "@planet/maps/Map";
+import { useEffect, useState } from "react";
 
 import { Layer as MapLayer } from "./Layer";
 import { useLayerStore } from "./stores/layers";
@@ -17,7 +17,7 @@ const handleInitialView = (olView, initialView, callback) => {
   } else {
     olView.animate(initialView, callback);
   }
-}
+};
 
 export const GeoMooseMap = () => {
   // the view is ready once the "initialView" has been handled,
@@ -28,8 +28,11 @@ export const GeoMooseMap = () => {
   const [currentMap, setCurrentMap] = useState(null);
   const [viewReady, setViewReady] = useState(false);
 
-  const [initialView] = useMapStore(state => [state.initialView]); 
-  const [backgrounds, layers] = useLayerStore(state => [state.backgrounds, state.layers]);
+  const [initialView] = useMapStore((state) => [state.initialView]);
+  const [backgrounds, layers] = useLayerStore((state) => [
+    state.backgrounds,
+    state.layers,
+  ]);
 
   useEffect(() => {
     // handle bounds instead of a center/zoom
@@ -42,28 +45,23 @@ export const GeoMooseMap = () => {
   }, [currentMap, viewReady, initialView]);
 
   return (
-    <div style={{flex: 1, position: 'relative'}}>
-      <Map style={{width: '100%', height: '100%'}}
+    <div style={{ flex: 1, position: "relative" }}>
+      <Map
+        style={{ width: "100%", height: "100%" }}
         controls={MAP_CONTROLS}
-        ref={olMap => setCurrentMap(olMap)}
+        ref={(olMap) => setCurrentMap(olMap)}
       >
         {viewReady && (
           <>
-            {backgrounds.map(layer => (
-              <MapLayer
-                key={layer.id}
-                layer={layer}
-              />
+            {backgrounds.map((layer) => (
+              <MapLayer key={layer.id} layer={layer} />
             ))}
-            {layers.toReversed().map(layer => (
-              <MapLayer
-                key={layer.id}
-                layer={layer}
-              />
+            {layers.toReversed().map((layer) => (
+              <MapLayer key={layer.id} layer={layer} />
             ))}
           </>
         )}
       </Map>
     </div>
   );
-}
+};
