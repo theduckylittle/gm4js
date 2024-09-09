@@ -8,4 +8,4 @@ publish: # build
 	cp demo/mapbook.json ./dist ;\
 	cd dist ;\
 	zip gm4-$$VERSION.zip -r * ;\
-	gcloud storage cp -r * gs://gm4-demo
+	gcloud storage cp --cache-control none -r * gs://gm4-demo
