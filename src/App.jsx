@@ -27,12 +27,12 @@ function App() {
   useEffect(() => {
     if (!ready) {
       // get the links and find the mapbook one
-      const links = document.getElementsByTagName("link");
+      const metas = document.getElementsByTagName("meta");
       let mapbookSrc = "";
-      for (let i = 0, ii = links.length; i < ii; i++) {
-        const link = links[i];
-        if (link.getAttribute("rel") === "mapbook") {
-          mapbookSrc = link.getAttribute("href");
+      for (let i = 0, ii = metas.length; i < ii; i++) {
+        const meta = metas[i];
+        if (meta.getAttribute("name") === "mapbook") {
+          mapbookSrc = meta.getAttribute("content");
         }
       }
 
