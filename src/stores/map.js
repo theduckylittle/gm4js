@@ -39,4 +39,17 @@ export const useMapStore = create((set) => ({
       }),
     );
   },
+
+  // nextView is used to shift the view
+  nextView: null,
+  setNextView: (nextView) => {
+    set(
+      produce((state) => {
+        state.nextView = nextView;
+      }),
+    );
+  },
+  clearNextView: () => {
+    set({ nextView: null });
+  },
 }));
