@@ -22,6 +22,12 @@ export const transformSelectionFeatures = (
       const format = new GeoJSON();
       const geomObject = format.writeGeometryObject(geom);
 
+      if (bufferSettings.distance === 0) {
+        return new Feature({
+          geometry: format.readGeometry(geomObject),
+        });
+      }
+
       const bufferGeomObject = buffer(
         geomObject,
         convertLength(bufferSettings.distance, bufferSettings.units, "m"),
