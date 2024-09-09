@@ -1,0 +1,74 @@
+{
+  "siteSettings": {
+    "logoHtml": "<div style='text-align: center'><a target='_blank' href='https://www.geomoose.org'><img src='https://www.geomoose.org/_static/logo_2011.png'/></a></div>"
+  },
+  "map": {
+    "initialView": {
+      "center": [-93.03521284228586, 44.63582863951095],
+      "zoom": 11
+    }
+  },
+  "layers": [
+    {
+      "type": "parquet",
+      "id": "parks",
+      "title": "County parks",
+      "on": true,
+      "style": {
+        "name": "icon",
+        "icon": "garden"
+      },
+      "url": "https://storage.googleapis.com/gm4-demo-data/county/parks.geoparquet"
+    },
+    {
+      "type": "parquet",
+      "id": "parcels-layer",
+      "title": "Parcels",
+      "on": true,
+      "style": "filled",
+      "url": "https://storage.googleapis.com/gm4-demo-data/county/parcels.geoparquet",
+      "results": {
+        "searchHtml": "",
+        "popupHtml": "",
+        "gridColumns": "*"
+      }
+    },
+    {
+      "type": "parquet",
+      "id": "cities-layer",
+      "title": "Census places",
+      "on": true,
+      "style": "outlined",
+      "url": "https://storage.googleapis.com/gm4-demo-data/census/cities.geoparquet",
+      "query": {
+        "select": false
+      }
+    }
+  ],
+  "backgrounds": [
+    {
+      "type": "OSM",
+      "title": "OpenStreetMap",
+      "on": true
+    },
+    {
+      "type": "cog",
+      "title": "Air photo",
+      "url": "https://storage.googleapis.com/gm4-demo-data/county/2022-aerial.tiff"
+    },
+    {
+      "type": "xyz",
+      "title": "Stadia smooth",
+      "url": "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}.png"
+    },
+    {
+      "type": "xyz",
+      "title": "Stadia smooth dark",
+      "url": "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}.png"
+    },
+    {
+      "type": "none",
+      "title": "None"
+    }
+  ]
+}

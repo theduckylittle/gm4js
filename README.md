@@ -1,6 +1,6 @@
-# GeoMoose 4.0
+<img src="./logo.png" />
 
-<img src="https://www.geomoose.org/_static/logo_2011.png" />
+# GeoMoose 4.0
 
 ## This version of GeoMoose is highly experimental!
 
@@ -22,3 +22,11 @@ The ultimate goal of the version 4.0-series is to attain the following:
     - The ability to convert and use their own data.
     - The ability to add a logo and relevant links to other sites.
     - Customize cartography with little effort.
+
+## Getting the on-going early release
+
+The release early-release zip file is available for download [here](https://storage.googleapis.com/gm4-demo/gm4-0.0.0.zip).
+
+## See the demo!
+
+The demo runs live in a Google storage bucker [here](https://storage.googleapis.com/gm4-demo/index.html)!

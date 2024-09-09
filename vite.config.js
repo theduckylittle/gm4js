@@ -11,6 +11,7 @@ export default defineConfig({
       localsConvention: "camelCaseOnly",
     },
   },
+  base: "",
   build: {
     assetsDir: "geomoose",
   },
