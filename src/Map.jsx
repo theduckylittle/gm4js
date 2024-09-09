@@ -131,8 +131,12 @@ export const GeoMooseMap = () => {
           </>
         )}
         <QueryLayer key="query-layer" />
-        <QueryLayer key="query-preview-layer" isPreview />
-        <SelectionLayer />
+        {!!mapControl && (
+          <>
+            <QueryLayer key="query-preview-layer" isPreview />
+            <SelectionLayer />
+          </>
+        )}
       </Map>
     </div>
   );
