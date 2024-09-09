@@ -47,3 +47,17 @@ body {
 .p-radiobutton-box:not(.p-disabled) {
   border-color: var(--geomoose-theme-blue);
 }
+
+.p-button:not(.p-button-text) {
+  background-color: var(--geomoose-theme-blue);
+  border-color: var(--geomoose-theme-blue);
+}
+
+.p-button.p-button-text {
+  color: var(--geomoose-theme-blue);
+}
+
+.p-button-group {
+  border: solid 1px var(--geomoose-theme-blue);
+  border-radius: 6px;
+}

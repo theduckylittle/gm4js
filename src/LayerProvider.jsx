@@ -2,6 +2,7 @@
  * Manage workers for the parquet layers.
  */
 import Feature from "ol/Feature";
+import GeoJSON from "ol/format/GeoJSON";
 import WKB from "ol/format/WKB";
 import PropTypes from "prop-types";
 import { useEffect, useRef } from "react";
@@ -10,9 +11,10 @@ import ArrowWorker from "./ArrowWorker?worker";
 import { useLayerStore } from "./stores/layers";
 import { useQueryStore } from "./stores/query";
 
+const GEOJSON_FORMAT = new GeoJSON();
+
 const createWorker = (
   layer,
-  filterSet,
   setFeatures,
   setSelectedFeatures,
   setFeatureData,
@@ -68,13 +70,13 @@ export const LayerProvider = ({ children }) => {
     state.layers,
     state.setFeatures,
   ]);
-  const [filterSet, setSelectedFeatures, setFeatureData] = useQueryStore(
-    (state) => [
+  const [filterSet, queryFeatures, setSelectedFeatures, setFeatureData] =
+    useQueryStore((state) => [
       state.filterSet,
+      state.queryFeatures,
       state.setSelectedFeatures,
       state.setFeatureData,
-    ],
-  );
+    ]);
 
   useEffect(() => {
     const nextWorkers = {};
@@ -87,7 +89,6 @@ export const LayerProvider = ({ children }) => {
           // need to create a new worker
           nextWorkers[layerId] = createWorker(
             layer,
-            filterSet,
             setFeatures,
             setSelectedFeatures,
             setFeatureData,
@@ -106,12 +107,27 @@ export const LayerProvider = ({ children }) => {
 
     // update the query filter for each layer
     Object.keys(workers.current).forEach((layerId) => {
-      workers.current[layerId].postMessage({
+      const queryMessage = {
         type: "execute-query",
         query: filterSet,
-      });
+      };
+      const layer = layers.filter((l) => l.id === layerId)[0];
+      if (queryFeatures.length > 0 && layer.query?.select !== false) {
+        queryMessage.queryFeatures = queryFeatures.map((feature) =>
+          GEOJSON_FORMAT.writeFeatureObject(feature),
+        );
+      }
+
+      workers.current[layerId].postMessage(queryMessage);
     });
-  }, [layers, filterSet, setFeatures, setSelectedFeatures, setFeatureData]);
+  }, [
+    layers,
+    filterSet,
+    setFeatures,
+    setSelectedFeatures,
+    setFeatureData,
+    queryFeatures,
+  ]);
 
   return children;
 };
