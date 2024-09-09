@@ -106,9 +106,7 @@ function runQuery(query, queryFeatures) {
 
 function getFeatureData(indexes, columns) {
   const fieldDefs = TABLE.schema.fields.filter(
-    (field) =>
-      (columns === "*" || columns.includes(field.name)) &&
-      !isGeometryField(field),
+    (field) => columns === "*" || columns.includes(field.name),
   );
 
   // decode the indexes
@@ -144,6 +142,26 @@ function getFeatureData(indexes, columns) {
             featureProperties[featureId] = {
               ...featureProperties[featureId],
               [fieldName]: decoder.decode(fieldValue),
+            };
+          }
+        }
+      });
+    } else if (isGeometryField(fieldDef)) {
+      const format = new WKB();
+      // add a bounding box to each geometry
+      field.data.forEach((dataSet, dsId) => {
+        const offsets = dataSet.valueOffsets;
+        for (let i = 1, ii = offsets.length; i < ii; i++) {
+          const fId = i - 1;
+          // this feature is selected
+          if (indexesByDataset[dsId] && indexesByDataset[dsId][fId]) {
+            const [start, end] = [offsets[i - 1], offsets[i]];
+            const fieldValue = dataSet.values.slice(start, end);
+            const geom = format.readGeometry(fieldValue);
+            const featureId = encodeId(dsId, fId);
+            featureProperties[featureId] = {
+              ...featureProperties[featureId],
+              ["gm:bounds"]: geom.getExtent(),
             };
           }
         }

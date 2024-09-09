@@ -13,11 +13,12 @@ import { useQueryStore } from "./stores/query";
 
 const MAP_CONTROLS = [];
 
-// compute the initial view based on parameters from the user,
+// compute the view based on parameters from the user,
 // this handles bounds gracefully.
-const handleInitialView = (olView, initialView, callback) => {
+const handleViewChange = (olView, initialView, callback) => {
   if (initialView.bounds) {
     olView.fit(initialView.bounds, {
+      padding: [50, 50, 50, 50],
       callback,
     });
   } else {
@@ -61,12 +62,14 @@ export const GeoMooseMap = () => {
   const [currentMap, setCurrentMap] = useState(null);
   const [viewReady, setViewReady] = useState(false);
 
-  // const selectionSource = useRef(configureSelectionSource());
-
-  const [initialView, mapControl] = useMapStore((state) => [
-    state.initialView,
-    state.control,
-  ]);
+  const [initialView, mapControl, nextView, clearNextView] = useMapStore(
+    (state) => [
+      state.initialView,
+      state.control,
+      state.nextView,
+      state.clearNextView,
+    ],
+  );
   const [backgrounds, layers] = useLayerStore((state) => [
     state.backgrounds,
     state.layers,
@@ -80,7 +83,7 @@ export const GeoMooseMap = () => {
     // handle bounds instead of a center/zoom
     if (currentMap && !viewReady) {
       const view = currentMap.getView();
-      handleInitialView(view, initialView, () => {
+      handleViewChange(view, initialView, () => {
         setViewReady(true);
       });
     }
@@ -89,6 +92,16 @@ export const GeoMooseMap = () => {
   const selectionSource = useMemo(() => {
     return configureSelectionSource(setSelectionFeatures);
   }, [setSelectionFeatures]);
+
+  useEffect(() => {
+    if (currentMap && viewReady && nextView) {
+      const view = currentMap.getView();
+      // move the map and then clear that from the view settings
+      handleViewChange(view, nextView, () => {
+        clearNextView();
+      });
+    }
+  }, [currentMap, viewReady, nextView, clearNextView]);
 
   return (
     <div style={{ flex: 1, position: "relative" }}>
